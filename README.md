@@ -1,10 +1,10 @@
 # colibri-coding-challenge
 
-# Setting Up a Python Virtual Environment
+## Setting Up a Python Virtual Environment
 
 Follow these steps to set up a Python virtual environment for your project.
 
-## 1. Install Python and Virtualenv
+### 1. Install Python and Virtualenv
 
 1. **Check if Python is Installed**:
    ```bash
@@ -25,7 +25,7 @@ Follow these steps to set up a Python virtual environment for your project.
 
 ---
 
-## 2. Create the Project Directory
+### 2. Create the Project Directory
 
 1. Create a new directory for your project (if not already created):
    ```bash
@@ -35,7 +35,7 @@ Follow these steps to set up a Python virtual environment for your project.
 
 ---
 
-## 3. Create a Virtual Environment
+### 3. Create a Virtual Environment
 
 1. Use `virtualenv` to create the virtual environment:
    ```bash
@@ -46,14 +46,14 @@ Follow these steps to set up a Python virtual environment for your project.
 
 ---
 
-## 4. Activate the Virtual Environment
+### 4. Activate the Virtual Environment
 
-### Linux/macOS:
+#### Linux/macOS:
 ```bash
 source venv/bin/activate
 ```
 
-### Windows:
+#### Windows:
 ```bash
 venv\Scripts\activate
 ```
@@ -62,7 +62,7 @@ You should now see `(venv)` at the beginning of your terminal prompt.
 
 ---
 
-## 5. Install Required Libraries
+### 5. Install Required Libraries
 
 1. Install the libraries needed for your project:
    ```bash
@@ -76,7 +76,7 @@ You should now see `(venv)` at the beginning of your terminal prompt.
 
 ---
 
-## 6. Deactivate the Virtual Environment
+### 6. Deactivate the Virtual Environment
 
 When you are done working in the virtual environment, deactivate it:
 ```bash
@@ -85,16 +85,16 @@ deactivate
 
 ---
 
-## 7. Reactivate the Virtual Environment
+### 7. Reactivate the Virtual Environment
 
 To reactivate the virtual environment later, navigate to your project directory and run the activation command again:
 
-### Linux/macOS:
+#### Linux/macOS:
 ```bash
 source venv/bin/activate
 ```
 
-### Windows:
+#### Windows:
 ```bash
 venv\Scripts\activate
 ```
