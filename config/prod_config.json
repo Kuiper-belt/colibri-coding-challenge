@@ -1,0 +1,17 @@
+{
+  "database": {
+    "jdbc_url": "jdbc:postgresql://prod-db-server:5432/prod_db",
+    "user": "prod_user",
+    "password": "secure_prod_password",
+    "driver": "org.postgresql.Driver",
+    "table": "prod_table"
+  },
+  "spark": {
+    "app_name": "ProdSparkApp",
+    "config": {
+      "spark.executor.memory": "4g",
+      "spark.sql.shuffle.partitions": "100"
+    },
+    "jars": "/path/to/libs/postgresql-42.7.4.jar"
+  }
+}

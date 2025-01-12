@@ -1,0 +1,17 @@
+{
+  "database": {
+    "jdbc_url": "jdbc:postgresql://localhost:5432/dev_db",
+    "user": "dev_user",
+    "password": "dev_password",
+    "driver": "org.postgresql.Driver",
+    "table": "dev_table"
+  },
+  "spark": {
+    "app_name": "DevSparkApp",
+    "config": {
+      "spark.executor.memory": "2g",
+      "spark.sql.shuffle.partitions": "4"
+    },
+    "jars": "/path/to/libs/postgresql-42.7.4.jar"
+  }
+}
