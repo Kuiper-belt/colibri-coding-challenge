@@ -1,17 +1,95 @@
 {
+  "data_path": "Add path to dev data dir here.",
+  "jars_path": "Add path to dev jars dir here.",
+  "pgsql_database": "Add name of dev database here.",
+
   "database": {
-    "jdbc_url": "jdbc:postgresql://localhost:5432/dev_db",
-    "user": "dev_user",
-    "password": "dev_password",
-    "driver": "org.postgresql.Driver",
-    "table": "dev_table"
+    "jdbc_url": "jdbc:postgresql://localhost:5432/",
+    "user": "Add dev database user login here.",
+    "password": "Add dev database user password here.",
+    "driver": "org.postgresql.Driver"
   },
+
   "spark": {
-    "app_name": "DevSparkApp",
+    "app_name": "Add dev spark app name here.",
     "config": {
       "spark.executor.memory": "2g",
-      "spark.sql.shuffle.partitions": "4"
+      "spark.sql.shuffle.partitions": "4",
+      "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version": "2"
     },
-    "jars": "/path/to/libs/postgresql-42.7.4.jar"
+    "jars": "Add jar file for database here."
+  },
+
+  "etl_config": {
+    "raw_data": {
+      "format": "csv",
+      "read_options": {
+        "path": "Add name of dev raw data file here.",
+        "header": "true",
+        "mode": "PERMISSIVE"
+      }
+    },
+    "bronze_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "bronze_table"
+    },
+    "silver_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "silver_table"
+    },
+    "quarantine_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "quarantine_table"
+    },
+    "gold_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "gold_table"
+    },
+    "date_filter": {
+      "filter_column": "timestamp",
+      "start_date": "Add start date to filter dev data here.",
+      "end_date": "Add end date to filter dev data here."
+    },
+    "etl_args": {
+    }
+  },
+
+  "schemas": {
+    "bronze": {
+      "timestamp": "VARCHAR(255)",
+      "turbine_id": "VARCHAR(255)",
+      "wind_speed": "VARCHAR(255)",
+      "wind_direction": "VARCHAR(255)",
+      "power_output": "VARCHAR(255)",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "quarantine": {
+      "timestamp": "VARCHAR(255)",
+      "turbine_id": "VARCHAR(255)",
+      "wind_speed": "VARCHAR(255)",
+      "wind_direction": "VARCHAR(255)",
+      "power_output": "VARCHAR(255)",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "silver": {
+      "timestamp": "TIMESTAMP",
+      "turbine_id": "INTEGER",
+      "wind_speed": "DOUBLE",
+      "wind_direction": "INTEGER",
+      "power_output": "DOUBLE",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "gold": {
+      "turbine_id": "INTEGER",
+      "date": "DATE",
+      "mean_power_output": "DOUBLE",
+      "min_power_output": "DOUBLE",
+      "max_power_output": "DOUBLE",
+      "anomalous_power_output": "BOOLEAN"
+    }
   }
 }
