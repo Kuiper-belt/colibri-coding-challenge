@@ -121,3 +121,57 @@ source venv/bin/activate
 ```bash
 venv\Scripts\activate
 ```
+## Project Structure:
+
+```commandline
+project-root/
+│
+├── configs/                     # Configuration files
+│   ├── __init__.py              # Makes configs a Python package
+│   ├── config_loader.py         # Configuration loader
+│   ├── dev_config.json
+│   ├── prod_config.json
+│   └── test_config.json
+│
+├── dags/                        # Airflow DAGs
+│   ├── __init__.py              # Makes dags a Python package
+│   └── wind_turbines_dag.py     # Airflow DAG for wind turbines ETL pipeline
+│
+├── data/                        # Data files for ETL pipeline
+│   ├── data_group_1.csv
+│   ├── data_group_2.csv
+│   └── data_group_3.csv
+│
+├── jobs/                        # ETL pipeline jobs
+│   ├── __init__.py              # Makes jobs a Python package
+│   └── wind_turbines/
+│       ├── __init__.py          # Makes wind_turbines a Python package
+│       ├── bronze_layer.py      # Bronze layer transformation
+│       ├── gold_layer.py        # Gold layer transformation
+│       ├── quarantine_layer.py  # Quarantine layer transformation
+│       └── silver_layer.py      # Silver layer transformation
+│
+├── libs/                        # External libraries (e.g., JDBC drivers)
+│   └── postgresql-42.7.4.jar
+│
+├── src/                         # Core Python package
+│   ├── __init__.py              # Makes src a Python package
+│   └── main.py                  # CLI for manual testing of ETL layers
+│
+├── tests/                       # Unit and integration tests
+│   ├── __init__.py              # Makes tests a Python package
+│   └── (test modules)           # Placeholder for test scripts
+│
+├── utils/                       # Utility modules
+│   ├── __init__.py              # Makes utils a Python package
+│   ├── db_utils.py              # Database utilities
+│   ├── gold_layer_operations.py # Gold layer utility functions
+│   ├── silver_layer_operations.py # Silver layer utility functions
+│   ├── spark_etl.py             # Core ETL logic
+│   └── spark_session_manager.py # Spark session management
+│
+├── .gitignore                   # Git ignore rules
+├── LICENSE                      # Project license
+├── README.md                    # Project documentation
+└── requirements.txt             # Python dependencies
+```
