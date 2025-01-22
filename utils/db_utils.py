@@ -166,8 +166,9 @@ def get_postgresql_options(database: str, table: str, env="dev") -> dict[str, st
     """
     config = load_config(env)
     db_config = config.get("database", {})
+    jdbc_url = db_config.get("jdbc_url") + database  # Append the database name
     return {
-        "url": db_config.get("jdbc_url").replace("postgresql://", f"jdbc:postgresql://{database}"),
+        "url": jdbc_url,
         "driver": db_config.get("driver", "org.postgresql.Driver"),
         "user": db_config.get("user"),
         "password": db_config.get("password"),
