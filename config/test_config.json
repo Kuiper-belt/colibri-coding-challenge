@@ -32,22 +32,22 @@
     "bronze_layer_config": {
       "format": "jdbc",
       "mode": "append",
-      "table": "test_bronze_table"
+      "table": "bronze_table"
     },
     "silver_layer_config": {
       "format": "jdbc",
       "mode": "append",
-      "table": "test_silver_table"
+      "table": "silver_table"
     },
     "quarantine_layer_config": {
       "format": "jdbc",
       "mode": "append",
-      "table": "test_quarantine_table"
+      "table": "quarantine_table"
     },
     "gold_layer_config": {
       "format": "jdbc",
       "mode": "append",
-      "table": "test_gold_table"
+      "table": "gold_table"
     },
     "date_filter": {
       "filter_column": "timestamp",
