@@ -31,7 +31,7 @@ from utils.spark_etl import etl
 from utils.db_utils import get_postgresql_options
 from config.config_loader import load_config
 from utils.silver_layer_operations import cast_columns, get_conditions
-from silver_layer import SILVER_CONDITIONS
+from .silver_layer import SILVER_CONDITIONS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
