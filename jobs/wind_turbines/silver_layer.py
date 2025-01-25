@@ -1,17 +1,18 @@
 """
 Silver Layer Transformation Module
 
-This module processes wind turbine data from the bronze layer, cleaning and validating it 
-to create a refined silver layer dataset. The silver layer transformation includes casting 
-columns to the correct schema, applying predefined validation rules (SILVER_CONDITIONS), 
-and removing duplicate records to ensure data consistency.
-
-The module integrates with the ETL pipeline to extract data from the bronze layer, transform 
-it into the silver schema, and load the transformed data into the silver layer table.
+This module processes wind turbine data from the bronze layer, cleaning and validating it
+to create a refined silver layer dataset. The silver layer transformation includes casting
+columns to the correct schema, applying predefined and dynamic validation rules, and removing
+duplicate records to ensure data consistency.
 
 Functions:
     silver_layer_transform: Cleans and transforms the input DataFrame for the silver layer.
     execute: Executes the ETL process for the silver layer.
+
+Dependencies:
+- PySpark
+- Custom utility modules: `spark_etl`, `db_utils`, `config_loader`, `silver_layer_operations`.
 """
 
 import logging
@@ -19,30 +20,32 @@ from pyspark.sql import DataFrame
 from utils.spark_etl import etl
 from utils.db_utils import get_postgresql_options
 from config.config_loader import load_config
-from utils.silver_layer_operations import cast_columns, get_conditions
+from utils.silver_layer_operations import cast_silver_schema, get_conditions, log_validation_statistics
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define filtering conditions
-SILVER_CONDITIONS = [
+# Define default filtering conditions
+DEFAULT_SILVER_CONDITIONS = [
     "wind_speed BETWEEN 0 AND 25",
     "wind_direction BETWEEN 0 AND 360",
     "power_output >= 0"
 ]
 
-def silver_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFrame:
+def silver_layer_transform(df: DataFrame, schema: dict[str, str], dynamic_conditions: list[str] = None) -> DataFrame:
     """
     Cleans and transforms the input DataFrame for the silver layer.
 
-    The transformation process involves:
-      1. Casting columns to the 'silver' schema as defined in the configuration.
-      2. Filtering data using predefined conditions (SILVER_CONDITIONS) to ensure validity.
-      3. Removing duplicate records to maintain unique entries.
+    This transformation involves:
+      1. Casting columns to the silver schema as defined in the configuration.
+      2. Filtering data using predefined and dynamic conditions to ensure validity.
+      3. Logging statistics for each validation step.
+      4. Removing duplicate records to maintain unique entries.
 
     Args:
         df (DataFrame): The input DataFrame from the bronze layer.
         schema (dict[str, str]): A dictionary defining the silver layer schema.
+        dynamic_conditions (list[str], optional): Additional dynamic conditions for validation.
 
     Returns:
         DataFrame: A transformed DataFrame meeting the silver layer specifications.
@@ -53,18 +56,28 @@ def silver_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFrame:
     try:
         logger.info("Starting silver layer transformation.")
 
-        # Cast columns using the provided schema
-        logger.info("Casting columns to schema: %s", schema)
-        df = cast_columns(df, schema)
+        # Initial row count
+        original_count = df.count()
+
+        # Cast columns to the silver schema
+        logger.info("Casting columns to the silver schema.")
+        df = cast_silver_schema(df, schema)
 
         # Apply filtering conditions
-        logger.info("Applying filtering conditions.")
-        combined_condition = get_conditions(SILVER_CONDITIONS, df)
+        logger.info("Applying validation conditions.")
+        combined_condition = get_conditions(
+            conditions=DEFAULT_SILVER_CONDITIONS,
+            df=df,
+            dynamic_conditions=dynamic_conditions
+        )
         df = df.filter(combined_condition)
+        log_validation_statistics(df, original_count, "Filter invalid rows based on conditions")
 
-        # Remove duplicates
-        logger.info("Removing duplicates.")
+        # Remove duplicate records
+        logger.info("Removing duplicate records.")
+        original_count = df.count()
         df = df.dropDuplicates()
+        log_validation_statistics(df, original_count, "Remove duplicate rows")
 
         logger.info("Silver layer transformation completed successfully.")
         return df
@@ -77,12 +90,12 @@ def execute(date_filter_config=None):
     """
     Executes the ETL process for the silver layer.
 
-    The function orchestrates the extraction of raw data from the bronze layer, 
-    transforms it using the `silver_layer_transform` function, and loads it into 
-    the silver layer table.
+    The function orchestrates the extraction of raw data from the bronze layer,
+    transforms it using the `silver_layer_transform` function, and loads it into
+the silver layer table.
 
     Args:
-        date_filter_config (dict, optional): A dictionary specifying date filtering 
+        date_filter_config (dict, optional): A dictionary specifying date filtering
         criteria with keys such as:
             - filter_column: The column to filter on.
             - start_date: The start date for filtering.
@@ -138,3 +151,11 @@ def execute(date_filter_config=None):
     except Exception as e:
         logger.error("An error occurred during the ETL pipeline execution: %s", e)
         raise
+
+if __name__ == '__main__':
+    # Example date filter configuration
+    test_date_filter_config = {
+        'filter_column': 'timestamp',
+        'start_date': '2022-03-01'
+    }
+    execute(date_filter_config=test_date_filter_config)

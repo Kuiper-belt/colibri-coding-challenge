@@ -3,7 +3,7 @@ Bronze Layer ETL Module
 
 This module is responsible for transforming raw wind turbine data into a structured format
 suitable for downstream processing. The bronze layer serves as an intermediate step that
-ingests raw CSV data, ensures the schema integrity by explicitly casting columns to their
+ingests raw CSV data, ensures schema integrity by explicitly casting columns to their
 expected data types, and appends metadata for traceability.
 
 The ETL process consists of:
@@ -15,25 +15,23 @@ Functions:
     bronze_layer_transform: Applies transformations to the raw DataFrame.
     execute: Executes the ETL pipeline for the bronze layer.
 
-Modules:
-    - pyspark.sql: Provides the Spark DataFrame and transformation functions.
-    - utils.spark_etl: Contains the generic ETL framework for reading, transforming, and writing data.
-    - utils.db_utils: Utility functions for PostgreSQL configurations.
-    - config.config_loader: Loads the environment-specific configuration.
+Dependencies:
+- PySpark
+- Custom utility modules: `spark_etl`, `db_utils`, `config_loader`, `bronze_layer_operations`.
 """
 
 import logging
-from pyspark.sql.functions import col, current_timestamp
+from pyspark.sql.functions import current_timestamp
 from pyspark.sql import DataFrame
-from pyspark.sql.types import StringType, TimestampType, DoubleType, IntegerType
 from utils.spark_etl import etl
 from utils.db_utils import get_postgresql_options
 from config.config_loader import load_config
+from utils.bronze_layer_operations import cast_bronze_schema
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def bronze_layer_transform(df: DataFrame) -> DataFrame:
+def bronze_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFrame:
     """
     Transforms raw data for the bronze layer.
 
@@ -43,6 +41,7 @@ def bronze_layer_transform(df: DataFrame) -> DataFrame:
 
     Args:
         df (DataFrame): The raw input DataFrame to be transformed.
+        schema (dict[str, str]): The schema to apply to the DataFrame.
 
     Returns:
         DataFrame: The transformed DataFrame with the expected schema and metadata.
@@ -53,15 +52,9 @@ def bronze_layer_transform(df: DataFrame) -> DataFrame:
     try:
         logger.info("Starting bronze layer transformation.")
 
-        # Explicitly cast columns to their expected data types
-        df = (
-            df.withColumn("timestamp", col("timestamp").cast(TimestampType()))
-              .withColumn("turbine_id", col("turbine_id").cast(StringType()))
-              .withColumn("wind_speed", col("wind_speed").cast(DoubleType()))
-              .withColumn("wind_direction", col("wind_direction").cast(IntegerType()))
-              .withColumn("power_output", col("power_output").cast(DoubleType()))
-        )
-        logger.info("Column casting completed.")
+        # Enforce schema using the utility function
+        logger.info("Casting columns to the bronze schema.")
+        df = cast_bronze_schema(df, schema, skip_columns=["metadata_datetime_created"])
 
         # Add metadata column
         logger.info("Adding metadata column to track record creation time.")
@@ -73,7 +66,6 @@ def bronze_layer_transform(df: DataFrame) -> DataFrame:
     except Exception as e:
         logger.error("An error occurred during bronze layer transformation: %s", e)
         raise
-
 
 def execute(date_filter_config: dict = None) -> None:
     """
@@ -105,6 +97,9 @@ def execute(date_filter_config: dict = None) -> None:
         raw_dataset_config = etl_cfg["raw_data"]
         bronze_layer_config = etl_cfg["bronze_layer_config"]
 
+        # Retrieve schema from config
+        schema = config["schemas"]["bronze"]
+
         # Extract database and table information
         database = config["pgsql_database"]
         table = bronze_layer_config["table"]
@@ -123,7 +118,7 @@ def execute(date_filter_config: dict = None) -> None:
             reader_dict=raw_dataset_config,
             writer_dict=writer_dict,
             date_filter_config=date_filter_config,
-            transform_func=bronze_layer_transform,
+            transform_func=lambda df: bronze_layer_transform(df, schema),
             env="dev"
         )
         logger.info("ETL pipeline (raw -> bronze) completed successfully.")
@@ -131,3 +126,11 @@ def execute(date_filter_config: dict = None) -> None:
     except Exception as e:
         logger.error("An error occurred during the ETL pipeline execution: %s", e)
         raise
+
+if __name__ == '__main__':
+    # Example date filter configuration
+    test_date_filter_config = {
+        'filter_column': 'timestamp',
+        'start_date': '2022-03-01'
+    }
+    execute(date_filter_config=test_date_filter_config)
