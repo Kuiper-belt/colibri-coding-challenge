@@ -174,23 +174,15 @@ colibri-coding-challenge/
 
 ### Install Java on Ubuntu (WSL)
 
-
-
-
-Add instructions here!!!
-
-PySpark requires Java to run. You can install OpenJDK if it's not already installed:
-
-sudo apt install -y openjdk-11-jdk
-
-You can verify the Java installation with:
-
-java -version
-
-
-
-
-
+- PySpark requires Java to run. You can install OpenJDK if it's not already installed:
+    ```bash
+    sudo apt install -y openjdk-11-jdk
+    ```
+- You can verify the Java installation with:
+    ```bash
+    java -version
+    ```
+  
 ### Install Python 3.10 on Ubuntu (WSL)
 
 If you are on Ubuntu in WSL and need Python 3.10, follow these steps:
