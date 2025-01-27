@@ -3,7 +3,7 @@ This module contains a class for managing SparkSession instances,
 used for interacting with Apache Spark and external data sources.
 """
 from pyspark.sql import SparkSession
-from config.config_loader import load_config
+from src.config.config_loader import load_config
 import logging
 
 logging.basicConfig(level=logging.INFO)

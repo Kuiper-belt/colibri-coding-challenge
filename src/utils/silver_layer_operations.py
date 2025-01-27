@@ -14,7 +14,6 @@ Dependencies:
 - PySpark for distributed data processing.
 - Logging for capturing runtime information.
 - Optional integration with external configurations for dynamic conditions.
-
 """
 
 from pyspark.sql import DataFrame

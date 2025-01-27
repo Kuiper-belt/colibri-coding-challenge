@@ -4,7 +4,7 @@ databases using Python and PySpark, integrated with a dynamic config setup.
 """
 import psycopg2
 from psycopg2 import sql
-from config.config_loader import load_config
+from src.config.config_loader import load_config
 import logging
 
 # Configure logging

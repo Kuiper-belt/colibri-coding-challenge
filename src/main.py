@@ -1,6 +1,6 @@
 import logging
-from utils.spark_session_manager import SparkSessionManager
-from config.config_loader import load_config
+from src.utils import SparkSessionManager
+from src.config import load_config
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

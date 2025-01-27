@@ -17,10 +17,10 @@ Dependencies:
 
 import logging
 from pyspark.sql import DataFrame
-from utils.spark_etl import etl
-from utils.db_utils import get_postgresql_options
-from config.config_loader import load_config
-from utils.silver_layer_operations import cast_silver_schema, get_conditions, log_validation_statistics
+from src.utils.spark_etl import etl
+from src.utils.db_utils import get_postgresql_options
+from src.config.config_loader import load_config
+from src.utils.silver_layer_operations import cast_silver_schema, get_conditions, log_validation_statistics
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

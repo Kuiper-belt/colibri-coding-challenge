@@ -27,11 +27,11 @@ Dependencies:
 
 import logging
 from pyspark.sql import DataFrame
-from utils.spark_etl import etl
-from utils.db_utils import get_postgresql_options
-from config.config_loader import load_config
-from utils.silver_layer_operations import cast_columns, get_conditions
-from .silver_layer import SILVER_CONDITIONS
+from src.utils.spark_etl import etl
+from src.utils.db_utils import get_postgresql_options
+from src.config.config_loader import load_config
+from src.utils.silver_layer_operations import cast_silver_schema, get_conditions
+from .silver_layer import DEFAULT_SILVER_CONDITIONS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,8 +41,8 @@ def quarantine_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFra
     Transforms the input DataFrame for the quarantine layer by isolating invalid records.
 
     This function applies the following steps:
-    1. Casts columns to the expected schema using the `cast_columns` utility.
-    2. Filters records that do not satisfy the `SILVER_CONDITIONS`.
+    1. Casts columns to the expected schema using the `cast_silver_schema` utility.
+    2. Filters records that do not satisfy the `DEFAULT_SILVER_CONDITIONS`.
     3. Removes duplicate records for data integrity.
 
     Args:
@@ -60,11 +60,11 @@ def quarantine_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFra
 
         # Cast columns using the provided schema
         logger.info("Casting columns to schema: %s", schema)
-        df = cast_columns(df, schema)
+        df = cast_silver_schema(df, schema)
 
         # Combine filtering conditions for records that do not meet silver conditions
         logger.info("Applying filtering conditions to quarantine invalid records.")
-        combined_condition = get_conditions(SILVER_CONDITIONS, df)
+        combined_condition = get_conditions(DEFAULT_SILVER_CONDITIONS, df, no_nulls=True)
         df = df.filter(~combined_condition)  # Negate the conditions to isolate invalid records
 
         # Drop duplicates

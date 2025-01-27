@@ -17,10 +17,10 @@ Functions:
 import logging
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, mean, max, min, stddev_pop, when
-from utils.spark_etl import etl
-from utils.db_utils import get_postgresql_options
-from config.config_loader import load_config
-from utils.gold_layer_operations import cast_gold_schema
+from src.utils.spark_etl import etl
+from src.utils.db_utils import get_postgresql_options
+from src.config.config_loader import load_config
+from src.utils.gold_layer_operations import cast_gold_schema
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
