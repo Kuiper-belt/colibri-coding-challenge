@@ -24,7 +24,7 @@ import logging
 from pyspark.sql.functions import current_timestamp
 from pyspark.sql import DataFrame
 from src.utils.spark_etl import etl
-from src.utils.db_utils import get_postgresql_options
+from src.utils.postgresql_db import get_postgresql_options
 from src.config.config_loader import load_config
 from src.utils.bronze_layer_operations import cast_bronze_schema
 

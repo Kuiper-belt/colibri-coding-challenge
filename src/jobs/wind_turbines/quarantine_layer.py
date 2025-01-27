@@ -28,7 +28,7 @@ Dependencies:
 import logging
 from pyspark.sql import DataFrame
 from src.utils.spark_etl import etl
-from src.utils.db_utils import get_postgresql_options
+from src.utils.postgresql_db import get_postgresql_options
 from src.config.config_loader import load_config
 from src.utils.silver_layer_operations import cast_silver_schema, get_conditions
 from .silver_layer import DEFAULT_SILVER_CONDITIONS
