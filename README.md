@@ -151,11 +151,11 @@ The images below showcase details of the `ingestion_table` in the PostgreSQL dat
 - The first image displays a query that retrieves metadata for each column, including the column name, data type, 
 maximum character length (if applicable), numeric precision, and numeric scale.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/ingestion_table_columns.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/ingestion_table_columns.png)
 
 - The second image presents a query that retrieves the first ten records from the `ingestion_table`, displaying its contents.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/ingestion_table_limit_10.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/ingestion_table_limit_10.png)
 
 #### Cleansed Table
 
@@ -164,11 +164,11 @@ The following images provide details of the `cleansed_table` in the `wind_turbin
 - The first image contains a query that retrieves metadata about each column, including names, data types, 
 character lengths, and numeric properties.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/cleansed_table_columns.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/cleansed_table_columns.png)
 
 - The second image presents a query that extracts the first ten rows from the `cleansed_table`.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/cleansed_table_limit_10.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/cleansed_table_limit_10.png)
 
 #### Quarantine Table
 
@@ -176,11 +176,11 @@ The images below highlight the `quarantine_table` in the `wind_turbines_db` data
 
 - The first image shows a query retrieving metadata about the table’s columns, including data types and constraints.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/quarantine_table_columns.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/quarantine_table_columns.png)
 
 - The second image presents a query fetching the first ten rows of the `quarantine_table`.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/quarantine_table_limit_10.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/quarantine_table_limit_10.png)
 
 #### Curated Table
 
@@ -188,11 +188,11 @@ The images below provide details about the `curated_table` in the `wind_turbines
 
 - The first image displays a query extracting column metadata, including names, data types, and size constraints.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/1dc9b413f11a00ea922ba2986732168654645bd8/imgs/curated_table_columns.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/curated_table_columns.png)
 
 - The second image retrieves the first ten records from the `curated_table`.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/8dca8408c5f964d78a99175316dd4a2809959455/imgs/curated_table_limit_10.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/curated_table_limit_10.png)
 
 ### Configuring PostgreSQL Database Connection
 
@@ -355,7 +355,7 @@ The workflow is managed and scheduled using the `wind_turbines_dag.py` Airflow D
 of the ETL jobs, running the cleansed and quarantine layers in parallel, as they effectively divide the 
 data into two streams.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/d65e3f7120f48bea3e5fb2fdf291210f61dbf8fc/imgs/wind_turbines_etl_dag.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/wind_turbines_etl_dag.png)
 
 The process is set to run every day at 23:30. It assumes that the system has been active since the date of the first 
 available records and that CSV files will take no longer than 30 minutes to append. Additionally, after a 
