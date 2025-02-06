@@ -45,30 +45,25 @@ def load_config(env=None) -> dict:
 
 def _merge_paths_with_base(config: dict) -> None:
     """
-    Merge the base 'data_path' with file paths in the configuration.
-    If a path is already absolute, it is left unchanged.
+    Ensures all paths in the configuration are absolute.
+    If a path is already absolute, it remains unchanged.
     """
-    if "data_path" not in config:
-        logger.debug("No 'data_path' found in config; skipping path merge.")
-        return
-
-    data_path = config["data_path"]
     etl_cfg = config.get("etl_config", {})
 
-    def merge_path(short_path: str) -> str:
-        """Helper to merge short path with data_path unless it is already absolute."""
-        return short_path if os.path.isabs(short_path) else os.path.join(data_path, short_path)
+    def ensure_absolute_path(path: str) -> str:
+        """Ensures the given path is absolute. If it's relative, converts it to an absolute path."""
+        return os.path.abspath(path) if path and not os.path.isabs(path) else path
 
-    # Merge path in raw_data
+    # Ensure raw_data read path is absolute
     if "raw_data" in etl_cfg and "read_options" in etl_cfg["raw_data"]:
-        short_path = etl_cfg["raw_data"]["read_options"].get("path")
-        if short_path:
-            etl_cfg["raw_data"]["read_options"]["path"] = merge_path(short_path)
-            logger.debug(f"Merged raw_data path: {short_path} -> {etl_cfg['raw_data']['read_options']['path']}")
+        path = etl_cfg["raw_data"]["read_options"].get("path")
+        if path:
+            etl_cfg["raw_data"]["read_options"]["path"] = ensure_absolute_path(path)
+            logger.debug(f"Updated raw_data path: {path} -> {etl_cfg['raw_data']['read_options']['path']}")
 
-    # Merge path in ingestion_layer_config
+    # Ensure ingestion_layer_config write path is absolute
     if "ingestion_layer_config" in etl_cfg and "write_options" in etl_cfg["ingestion_layer_config"]:
-        short_path = etl_cfg["ingestion_layer_config"]["write_options"].get("path")
-        if short_path:
-            etl_cfg["ingestion_layer_config"]["write_options"]["path"] = merge_path(short_path)
-            logger.debug(f"Merged ingestion_layer_config path: {short_path} -> {etl_cfg['ingestion_layer_config']['write_options']['path']}")
+        path = etl_cfg["ingestion_layer_config"]["write_options"].get("path")
+        if path:
+            etl_cfg["ingestion_layer_config"]["write_options"]["path"] = ensure_absolute_path(path)
+            logger.debug(f"Updated ingestion_layer_config path: {path} -> {etl_cfg['ingestion_layer_config']['write_options']['path']}")

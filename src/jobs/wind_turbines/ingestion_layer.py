@@ -20,7 +20,9 @@ Dependencies:
 - Custom utility modules: `spark_etl`, `db_utils`, `config_loader`, `ingestion_layer_operations`.
 """
 
+import os
 import logging
+from glob import glob
 from pyspark.sql.functions import current_timestamp
 from pyspark.sql import DataFrame
 from src.utils.spark_etl import etl
@@ -28,8 +30,26 @@ from src.utils.postgresql_db import get_postgresql_options
 from src.config.config_loader import load_config
 from src.utils.ingestion_layer_operations import cast_ingestion_schema
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def get_all_csv_files(directory: str) -> list:
+    """
+    Retrieve all CSV files from the given directory.
+
+    Args:
+        directory (str): The folder path containing CSV files.
+
+    Returns:
+        list: A list of absolute file paths formatted for Spark (file:///E:/path/to/file.csv).
+    """
+    files = glob(os.path.join(directory, "*.csv"))
+    if not files:
+        raise FileNotFoundError(f"No CSV files found in directory: {directory}")
+
+    # Convert Windows-style paths to Spark-compatible format (file:///E:/...)
+    return [f"file:///{f.replace(os.sep, '/')}" for f in files]
 
 def ingestion_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFrame:
     """
@@ -92,37 +112,53 @@ def execute(date_filter_config: dict = None) -> None:
         # Load environment-specific configuration
         config = load_config("dev")
         etl_cfg = config["etl_config"]
+        raw_data_path = etl_cfg["raw_data"]["read_options"]["path"] # Base directory for CSV files
 
-        # Retrieve raw dataset and ingestion layer configurations
-        raw_dataset_config = etl_cfg["raw_data"]
-        ingestion_layer_config = etl_cfg["ingestion_layer_config"]
+        # Retrieve all CSV files dynamically
+        all_files = get_all_csv_files(raw_data_path)
+        logger.info(f"Found {len(all_files)} CSV files to process.")
 
-        # Retrieve schema from config
-        schema = config["schemas"]["ingestion"]
+        for file in all_files:
+            logger.info(f"Processing file: {file}")
 
-        # Extract database and table information
-        database = config["pgsql_database"]
-        table = ingestion_layer_config["table"]
+            # Retrieve raw dataset and ingestion layer configurations
+            raw_dataset_config = etl_cfg["raw_data"]
+            raw_dataset_config["read_options"]["path"] = file  # Set file path dynamically
 
-        # Retrieve PostgreSQL options
-        postgresql_options = get_postgresql_options(database, table, env="dev")
+            ingestion_layer_config = etl_cfg["ingestion_layer_config"]
 
-        # Merge PostgreSQL options with ingestion layer configuration
-        writer_dict = {**ingestion_layer_config, **postgresql_options}
+            # Retrieve schema from config
+            schema = config["schemas"]["ingestion"]
 
-        logger.info(f"Final writer configuration: {writer_dict}")
+            # Extract database and table information
+            database = config["pgsql_database"]
+            table = ingestion_layer_config["table"]
 
-        # Perform ETL
-        logger.info("Starting ETL from raw to ingestion with optional date filtering...")
-        etl(
-            reader_dict=raw_dataset_config,
-            writer_dict=writer_dict,
-            date_filter_config=date_filter_config,
-            transform_func=lambda df: ingestion_layer_transform(df, schema),
-            env="dev"
-        )
-        logger.info("ETL pipeline execution for the ingestion layer completed successfully.")
+            # Retrieve PostgreSQL options
+            postgresql_options = get_postgresql_options(database, table, env="dev")
+
+            # Merge PostgreSQL options with ingestion layer configuration
+            writer_dict = {**ingestion_layer_config, **postgresql_options}
+
+            logger.info(f"Final writer configuration: {writer_dict}")
+
+            # Perform ETL
+            logger.info("Starting ETL from raw to ingestion with optional date filtering...")
+            etl(
+                reader_dict=raw_dataset_config,
+                writer_dict=writer_dict,
+                date_filter_config=date_filter_config,
+                transform_func=lambda df: ingestion_layer_transform(df, schema),
+                env="dev"
+            )
+
+            logger.info(f"Successfully processed file: {file}")
+
+        logger.info("All CSV files processed successfully for the ingestion layer.")
+
+    except FileNotFoundError as e:
+        logger.error(f"No CSV files found: {e}")
 
     except Exception as e:
-        logger.error("An error occurred during the ETL pipeline execution: %s", e)
+        logger.error(f"An error occurred during ingestion layer execution: {e}")
         raise

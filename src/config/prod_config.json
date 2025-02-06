@@ -1,7 +1,5 @@
 {
-  "data_path": "Add path to prod data directory here.",
-  "jars_path": "Add path to prod jars directory here.",
-  "pgsql_database": "Add name of prod database here.",
+  "pgsql_database": "prod_wind_turbines_db",
 
   "database": {
     "jdbc_url": "jdbc:postgresql://prod-database-url:5432/",
@@ -11,7 +9,7 @@
   },
 
   "spark": {
-    "app_name": "Add prod spark app name here.",
+    "app_name": "ProdWindTurbineApp",
     "config": {
       "spark.executor.memory": "8g",
       "spark.driver.memory": "4g",
@@ -19,14 +17,14 @@
       "spark.sql.shuffle.partitions": "16",
       "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version": "2"
     },
-    "jars": "Add prod jar file for database here."
+    "jars": "Add jar file for test database here."
   },
 
   "etl_config": {
     "raw_data": {
       "format": "csv",
       "read_options": {
-        "path": "Add name of raw data file for prod here.",
+        "path": "Add the path to the raw production data here.",
         "header": "true",
         "mode": "PERMISSIVE"
       }

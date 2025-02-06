@@ -1,17 +1,15 @@
 {
-  "data_path": "Add path to dev data dir here.",
-  "jars_path": "Add path to dev jars dir here.",
-  "pgsql_database": "Add name of dev database here.",
+  "pgsql_database": "wind_turbines_db",
 
   "database": {
     "jdbc_url": "jdbc:postgresql://localhost:5432/",
-    "user": "Add test database user login here",
-    "password": "Add test database user password here.",
+    "user": "Add dev database user login here.",
+    "password": "Add dev database user password here.",
     "driver": "org.postgresql.Driver"
   },
 
   "spark": {
-    "app_name": "Add test spark app name here.",
+    "app_name": "DevWindTurbineApp",
     "config": {
       "spark.executor.memory": "2g",
       "spark.sql.shuffle.partitions": "4",
@@ -24,7 +22,7 @@
     "raw_data": {
       "format": "csv",
       "read_options": {
-        "path": "Add name of test raw data file here",
+        "path": "Add the path to the raw development data here.",
         "header": "true",
         "mode": "PERMISSIVE"
       }

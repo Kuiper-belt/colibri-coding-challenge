@@ -1,7 +1,5 @@
 {
-  "data_path": "Add path to test data dir here.",
-  "jars_path": "Add path to test jars dir here.",
-  "pgsql_database": "Add name of test database here.",
+  "pgsql_database": "test_wind_turbines_db",
 
   "database": {
     "jdbc_url": "jdbc:postgresql://localhost:5432/",
@@ -11,7 +9,7 @@
   },
 
   "spark": {
-    "app_name": "Add test spark app name here.",
+    "app_name": "TestWindTurbineApp",
     "config": {
       "spark.executor.memory": "1g",
       "spark.sql.shuffle.partitions": "2",
@@ -24,7 +22,7 @@
     "raw_data": {
       "format": "csv",
       "read_options": {
-        "path": "Add name of test raw data file here.",
+        "path": "Add the path to the raw testing data here.",
         "header": "true",
         "mode": "PERMISSIVE"
       }
