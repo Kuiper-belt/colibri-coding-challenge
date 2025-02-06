@@ -15,6 +15,7 @@ Dependencies:
 
 import os
 from glob import glob
+import platform
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 import logging
@@ -108,5 +109,11 @@ def get_all_csv_files(directory: str) -> list:
     if not files:
         raise FileNotFoundError(f"No CSV files found in directory: {directory}")
 
-    # Convert Windows-style paths to Spark-compatible format (file:///E:/...)
-    return [f"file://{os.path.abspath(f).replace(os.sep, '/')}" for f in files]
+    # Get absolute paths
+    absolute_paths = [os.path.abspath(f) for f in files]
+
+    # Handle Windows paths and Unix paths.
+    if platform.system() == "Windows":
+        return [f"file:///{path.replace(os.sep, '/')}" for path in absolute_paths]
+    else:
+        return [f"file://{path}" for path in absolute_paths]  # Keep Unix/Linux Paths Normal
