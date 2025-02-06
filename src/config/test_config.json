@@ -1,0 +1,99 @@
+{
+  "data_path": "Add path to test data dir here.",
+  "jars_path": "Add path to test jars dir here.",
+  "pgsql_database": "Add name of test database here.",
+
+  "database": {
+    "jdbc_url": "jdbc:postgresql://localhost:5432/",
+    "user": "Add test database user login here.",
+    "password": "Add test database user password here.",
+    "driver": "org.postgresql.Driver"
+  },
+
+  "spark": {
+    "app_name": "Add test spark app name here.",
+    "config": {
+      "spark.executor.memory": "1g",
+      "spark.sql.shuffle.partitions": "2",
+      "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version": "2"
+    },
+    "jars": "Add jar file for test database here."
+  },
+
+  "etl_config": {
+    "raw_data": {
+      "format": "csv",
+      "read_options": {
+        "path": "Add name of test raw data file here.",
+        "header": "true",
+        "mode": "PERMISSIVE"
+      }
+    },
+    "ingestion_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "ingestion_table"
+    },
+    "cleansed_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "cleansed_table"
+    },
+    "quarantine_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "quarantine_table"
+    },
+    "curated_layer_config": {
+      "format": "jdbc",
+      "mode": "append",
+      "table": "curated_table"
+    },
+    "dag": {
+      "owner": "dev_airflow_user",
+      "depends_on_past": false,
+      "retries": 2
+    },
+    "date_filter": {
+      "filter_column": "timestamp",
+      "start_date": "Set the date from which data ingestion begins."
+    },
+    "etl_args": {
+    }
+  },
+
+  "schemas": {
+    "ingestion": {
+      "timestamp": "TIMESTAMP",
+      "turbine_id": "INTEGER",
+      "wind_speed": "DOUBLE PRECISION",
+      "wind_direction": "INTEGER",
+      "power_output": "DOUBLE PRECISION",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "quarantine": {
+      "timestamp": "TIMESTAMP",
+      "turbine_id": "INTEGER",
+      "wind_speed": "DOUBLE PRECISION",
+      "wind_direction": "INTEGER",
+      "power_output": "DOUBLE PRECISION",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "cleansed": {
+      "timestamp": "TIMESTAMP",
+      "turbine_id": "INTEGER",
+      "wind_speed": "DOUBLE PRECISION",
+      "wind_direction": "INTEGER",
+      "power_output": "DOUBLE PRECISION",
+      "metadata_datetime_created": "TIMESTAMP NOT NULL"
+    },
+    "curated": {
+      "turbine_id": "INTEGER",
+      "date": "DATE",
+      "mean_power_output": "DOUBLE PRECISION",
+      "min_power_output": "DOUBLE PRECISION",
+      "max_power_output": "DOUBLE PRECISION",
+      "anomalous_power_output": "BOOLEAN"
+    }
+  }
+}
