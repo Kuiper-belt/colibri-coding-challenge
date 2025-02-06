@@ -109,4 +109,4 @@ def get_all_csv_files(directory: str) -> list:
         raise FileNotFoundError(f"No CSV files found in directory: {directory}")
 
     # Convert Windows-style paths to Spark-compatible format (file:///E:/...)
-    return [f"file:///{f.replace(os.sep, '/')}" for f in files]
+    return [f"file://{os.path.abspath(f).replace(os.sep, '/')}" for f in files]
