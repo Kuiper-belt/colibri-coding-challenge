@@ -28,28 +28,11 @@ from pyspark.sql import DataFrame
 from src.utils.spark_etl import etl
 from src.utils.postgresql_db import get_postgresql_options
 from src.config.config_loader import load_config
-from src.utils.ingestion_layer_operations import cast_ingestion_schema
+from src.utils.ingestion_layer_operations import cast_ingestion_schema, get_all_csv_files
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-def get_all_csv_files(directory: str) -> list:
-    """
-    Retrieve all CSV files from the given directory.
-
-    Args:
-        directory (str): The folder path containing CSV files.
-
-    Returns:
-        list: A list of absolute file paths formatted for Spark (file:///E:/path/to/file.csv).
-    """
-    files = glob(os.path.join(directory, "*.csv"))
-    if not files:
-        raise FileNotFoundError(f"No CSV files found in directory: {directory}")
-
-    # Convert Windows-style paths to Spark-compatible format (file:///E:/...)
-    return [f"file:///{f.replace(os.sep, '/')}" for f in files]
 
 def ingestion_layer_transform(df: DataFrame, schema: dict[str, str]) -> DataFrame:
     """

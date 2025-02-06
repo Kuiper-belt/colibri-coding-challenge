@@ -13,6 +13,8 @@ Dependencies:
 - Logging: For runtime insights and debugging.
 """
 
+import os
+from glob import glob
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 import logging
@@ -87,3 +89,24 @@ def cast_ingestion_schema(df: DataFrame, schema: dict[str, str], skip_columns: l
     logger.info("Resulting DataFrame schema: %s", df.dtypes)
     logger.info("All columns cast to the specified schema successfully.")
     return df
+
+def get_all_csv_files(directory: str) -> list:
+    """
+    Retrieve all CSV files from the given directory.
+
+    Args:
+        directory (str): The folder path containing CSV files.
+
+    Returns:
+        list: A list of absolute file paths formatted for Spark (file:///E:/path/to/file.csv).
+
+    Raises:
+        FileNotFoundError: If no CSV files are found in the specified directory.
+    """
+    files = glob(os.path.join(directory, "*.csv"))
+
+    if not files:
+        raise FileNotFoundError(f"No CSV files found in directory: {directory}")
+
+    # Convert Windows-style paths to Spark-compatible format (file:///E:/...)
+    return [f"file:///{f.replace(os.sep, '/')}" for f in files]

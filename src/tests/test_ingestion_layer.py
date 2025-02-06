@@ -1,8 +1,10 @@
 import unittest
+import os
+from unittest.mock import patch
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.functions import col
 from src.jobs.wind_turbines.ingestion_layer import ingestion_layer_transform
-from src.utils.ingestion_layer_operations import cast_ingestion_schema
+from src.utils.ingestion_layer_operations import cast_ingestion_schema, get_all_csv_files
 
 
 class TestIngestionLayer(unittest.TestCase):
@@ -107,6 +109,39 @@ class TestIngestionLayer(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             cast_ingestion_schema(df, self.ingestion_schema)
+
+    @patch("src.utils.ingestion_layer_operations.glob")
+    def test_get_all_csv_files(self, mock_glob):
+        """
+        Test get_all_csv_files function to ensure it retrieves multiple CSV files correctly.
+        """
+        # Simulate multiple CSV files in directory
+        mock_glob.return_value = [
+            "/path/to/data/file1.csv",
+            "/path/to/data/file2.csv",
+            "/path/to/data/file3.csv"
+        ]
+
+        files = get_all_csv_files("/path/to/data")
+
+        # Ensure all files are converted to Spark-compatible format
+        expected_files = [
+            "file:///path/to/data/file1.csv",
+            "file:///path/to/data/file2.csv",
+            "file:///path/to/data/file3.csv"
+        ]
+
+        self.assertEqual(files, expected_files, "get_all_csv_files did not return expected file paths.")
+
+    @patch("src.utils.ingestion_layer_operations.glob")
+    def test_get_all_csv_files_no_files(self, mock_glob):
+        """
+        Test get_all_csv_files function when no files are found.
+        """
+        mock_glob.return_value = []  # Simulate no files
+
+        with self.assertRaises(FileNotFoundError):
+            get_all_csv_files("/path/to/empty_directory")
 
 
 if __name__ == "__main__":
