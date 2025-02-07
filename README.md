@@ -31,6 +31,21 @@ Please provide a brief description of your solution design and any assumptions m
 
 ## Solution Design and Preliminary Assumptions
 
+### Initial Assumptions and Observations
+
+Through an initial inspection of the data and supporting research, I have identified key operational thresholds for 
+wind turbines that ensure safe and efficient performance. Wind turbines require a cut-in speed of 6-9 mph (2.5-4 m/s) 
+to begin generating power. At wind speeds above 55 mph (25 m/s), known as the cut-out speed, turbines automatically 
+shut down to prevent damage. Given this, I do not expect modern wind turbines to generate power at wind speeds 
+exceeding 25 m/s, as they are designed to cut out for safety reasons.
+
+In addition to these operational limits, wind direction should always be recorded as an integer value between 0 and 360 
+degrees, as this represents a full rotational range. Furthermore, any power output values below 0 should be removed 
+from the dataset, as negative power generation is highly unlikely to occur under normal operating conditions.
+
+These initial assumptions form the foundation of my approach, with further details outlined in the solution design 
+within this file.
+
 ### Data Processing Pipeline
 
 The solution consists of a **pipeline of ETL jobs** that processes data through **five sequential layers**, with 
