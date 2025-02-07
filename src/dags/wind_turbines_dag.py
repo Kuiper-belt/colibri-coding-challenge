@@ -3,6 +3,9 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import logging
 
+# Import the initialization module
+from src.utils.initialize_database import initialize_database
+
 # Import the layer modules
 import src.jobs.wind_turbines.ingestion_layer as ingestion
 import src.jobs.wind_turbines.cleansed_layer as cleansed
@@ -48,9 +51,16 @@ with DAG(
     default_args=default_args,
     description='ETL pipeline for wind turbines data processing',
     schedule_interval='30 23 * * *',  # Adjust this as needed
-    start_date=start_date, # Use the dynamically loaded start_date
+    start_date=start_date,  # Use the dynamically loaded start_date
     catchup=False,
 ) as dag:
+
+    # Task Initialize Database
+    initialize_db = PythonOperator(
+        task_id='initialize_database',
+        python_callable=lambda: initialize_database(env),
+    )
+
     # Task for the ingestion layer
     ingestion_wind_turbine = PythonOperator(
         task_id='ingestion_layer_etl',
@@ -76,4 +86,5 @@ with DAG(
     )
 
     # Set task dependencies
+    initialize_db >> ingestion_wind_turbine  # Ensure DB is ready before ingestion
     ingestion_wind_turbine >> [quarantine_wind_turbine, cleansed_wind_turbine] >> curated_wind_turbine
