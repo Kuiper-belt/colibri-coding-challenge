@@ -41,7 +41,22 @@ the last four corresponding to jobs in the `jobs/` directory and tables in the *
 
 Contains the raw, unprocessed data as initially received and stored in `data/`.
 
-#### **2. Ingestion Layer**
+#### **2. Database Initialization Layer**
+
+The database initialization layer ensures that the required PostgreSQL database and tables exist before ingestion 
+begins. This step is executed using the initialize_database.py module, which:
+
+- Loads configuration details, including database and schema definitions.
+
+- Ensures the wind_turbines_db database is created if it does not already exist.
+
+- Creates tables based on the predefined schema.
+
+- Closes the database connection after setup.
+
+This process ensures that the ingestion layer has a valid database structure to write data into.
+
+#### **3. Ingestion Layer**
 
 The **ingestion layer** processes raw wind turbine data by ensuring schema consistency, applying basic transformations, and 
 tracking metadata before storing the data in **PostgreSQL**. Its primary function is to enforce data integrity while 
@@ -63,7 +78,7 @@ transformations, such as type casting and timestamp addition, are performed. The
 which is invoked within execute, may also apply additional transformations, such as filtering, depending 
 on its internal implementation.
 
-#### **3. Cleansed Layer**
+#### **4. Cleansed Layer**
 
 The **cleansed layer** processes wind turbine data from the **ingestion layer**, refining it by performing **data cleaning, 
 validation, and deduplication.** It ensures that the data is **accurate, consistent, and ready for downstream analysis** 
@@ -85,7 +100,7 @@ quality improvements.
 This process **cleans, standardises, and validates** the raw ingested data from the **ingestion layer**, making it suitable 
 for further processing and analytics.
 
-#### **4. Quarantine Layer**
+#### **5. Quarantine Layer**
 
 The **quarantine layer** is responsible for **identifying and isolating invalid records** in the wind turbine data pipeline. 
 It ensures that only **valid data progresses** to downstream processing by filtering out records that **fail predefined 
@@ -113,7 +128,7 @@ for key turbine metrics, and any record that **does not meet these conditions is
 This **quarantine layer enhances data quality monitoring** by isolating **invalid records, missing values, and outliers,** 
 ensuring only **clean, validated data** reaches the **cleansed and curated layers** for further analysis.
 
-#### **5. Curated Layer**
+#### **6. Curated Layer**
 
 The **curated layer** processes wind turbine data from the **cleansed layer**, refining it for **anomaly detection, and 
 analytics.** This stage **aggregates data**, calculates **summary statistics**, and **flags anomalies**, 
@@ -343,6 +358,7 @@ and consistent Spark usage.
 - **Custom Spark Settings**: Applies configurations such as application name, resource allocation, and external JARs.
 
 #### Dependencies:
+
 - PySpark (for Spark session management)
 
 This modular design allows for scalability and reusability across different ETL jobs and pipelines while maintaining 
