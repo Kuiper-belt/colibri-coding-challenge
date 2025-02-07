@@ -355,7 +355,7 @@ The workflow is managed and scheduled using the `wind_turbines_dag.py` Airflow D
 of the ETL jobs, running the cleansed and quarantine layers in parallel, as they effectively divide the 
 data into two streams.
 
-![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/dbb66361d48c04987e3436bb0b2a41bb9bf98224/imgs/wind_turbines_etl_dag.png)
+![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/b093f323e440d9de537f42192c0eab096fc8cb87/imgs/wind_turbines_etl_dag.png)
 
 The process is set to run every day at 23:30. It assumes that the system has been active since the date of the first 
 available records and that CSV files will take no longer than 30 minutes to append. Additionally, after a 
