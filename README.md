@@ -364,12 +364,15 @@ and consistent Spark usage.
 This modular design allows for scalability and reusability across different ETL jobs and pipelines while maintaining 
 high code quality and testability.
 
-Additionally, the `initialize_database.py` module serves as a one-time script that must be executed manually before 
-running the pipeline. Its purpose is to set up the required PostgreSQL database and tables.
+The `initialize_database.py` **module plays a dual role in the ETL workflow**. It can be executed **manually** before 
+running the pipeline to set up the required PostgreSQL database and tables, allowing for independent testing of each layer using 
+the `main.py` module and the CLI ('Refer to the section labelled **Evaluating ETL Layers and Modules**.'). However, 
+it is also **integrated into the Airflow DAG** (`wind_turbines_dag.py`), ensuring that the database and tables are 
+created before any other processing steps can be executed.
 
-The workflow is managed and scheduled using the `wind_turbines_dag.py` Airflow DAG. This DAG orchestrates the execution 
-of the ETL jobs, running the cleansed and quarantine layers in parallel, as they effectively divide the 
-data into two streams.
+The workflow is orchestrated and scheduled using the `wind_turbines_dag.py` Airflow DAG. This DAG **automates** the 
+execution of the ETL pipeline, running the **cleansed and quarantine layers in parallel**, as they effectively split 
+the data into two streams for validation and anomaly detection.
 
 ![Image Alt](https://github.com/Kuiper-belt/colibri-coding-challenge/blob/b093f323e440d9de537f42192c0eab096fc8cb87/imgs/wind_turbines_etl_dag.png)
 
@@ -379,9 +382,9 @@ built-in single retry, any missed or failed ingestions will be manually re-run (
 so that developers have the opportunity to inspect any errors beforehand.
 
 The solution uses incremental ingestion by applying the `date_filter_config` to filter the timestamp column 
-for records received on the current day, and it writes the data in `append mode` to the target table. This date 
+for records received on the current day, and it writes the data in `append` mode to the target table. This date 
 filter can be managed directly within the DAG or overridden during a manual trigger. The logic for this process is 
-implemented in the `etl_utils.filter_ingestion_period` function.
+implemented in the `spark_etl.filter_ingestion_period` function.
 
 ### Project Structure
 
